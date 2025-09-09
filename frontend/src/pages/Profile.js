@@ -1,0 +1,97 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const Profile = () => {
+  const [user, setUser] = useState(null);
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!token) return;
+      try {
+        const res = await axios.get('http://localhost:5001/api/auth/profile', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setUser(res.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchProfile();
+  }, [token]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    alert('Logged out successfully!');
+    window.location.href = '/';
+  };
+
+  if (!user) return <p>Loading profile...</p>;
+
+  return (
+    <div style={containerStyle}>
+      <h2>👤 My Profile</h2>
+      <div style={cardStyle}>
+        <p><strong>Name:</strong> {user.name}</p>
+        <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Joined On:</strong> {new Date(user.created_at).toLocaleDateString()}</p>
+        <button style={logoutButtonStyle} onClick={handleLogout}>Logout</button>
+      </div>
+
+      {/* Additional responsive & hover effects */}
+      <style>
+        {`
+          @media (max-width: 768px) {
+            div {
+              padding: 15px;
+            }
+          }
+
+          button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+            transition: all 0.3s ease;
+          }
+
+          div:hover {
+            transform: scale(1.02);
+            transition: all 0.3s ease;
+          }
+        `}
+      </style>
+    </div>
+  );
+};
+
+// Styles
+const containerStyle = {
+  padding: '30px',
+  textAlign: 'center',
+  fontFamily: 'Arial, sans-serif',
+  backgroundColor: '#f0f8ff',
+  minHeight: '80vh'
+};
+
+const cardStyle = {
+  maxWidth: '400px',
+  margin: '20px auto',
+  padding: '25px',
+  border: '1px solid #ccc',
+  borderRadius: '15px',
+  boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
+  backgroundColor: '#ffffff'
+};
+
+const logoutButtonStyle = {
+  marginTop: '20px',
+  padding: '12px 25px',
+  border: 'none',
+  borderRadius: '8px',
+  backgroundColor: '#4CAF50',
+  color: 'white',
+  cursor: 'pointer',
+  fontWeight: '600'
+};
+
+export default Profile;
