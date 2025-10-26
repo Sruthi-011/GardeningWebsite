@@ -19,10 +19,17 @@ const Login = () => {
             const data = await res.json();
             if (data.token) {
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('userEmail', email);  
+
                 setMessage('✅ Login successful!');
                 setEmail('');
                 setPassword('');
-                setTimeout(() => navigate('/'), 1000);
+
+                if (email === "admin@example.com") {
+                    setTimeout(() => navigate('/admin-dashboard'), 1000);
+                } else {
+                    setTimeout(() => navigate('/'), 1000);
+                }
             } else {
                 setMessage(data.error || '❌ Login failed');
             }
@@ -92,8 +99,6 @@ const Login = () => {
                         cursor: 'pointer',
                         transition: 'all 0.3s'
                     }}
-                    onMouseOver={e => e.target.style.backgroundColor = '#45a049'}
-                    onMouseOut={e => e.target.style.backgroundColor = '#4CAF50'}
                 >
                     Login
                 </button>

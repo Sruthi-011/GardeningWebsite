@@ -3,20 +3,19 @@ import ProductCard from '../components/ProductCard';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
+  const [mainCategory, setMainCategory] = useState('plants');
   const [filter, setFilter] = useState('');
   const [season, setSeason] = useState('');
   const [loading, setLoading] = useState(false);
+  const [hoveredBtn, setHoveredBtn] = useState(null);
 
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        let url = 'http://localhost:5001/api/products';
-
-        if (filter === 'featured') url = 'http://localhost:5001/api/products/featured';
-        else if (filter) url = `http://localhost:5001/api/products/category/${filter}`;
-
-        if (season) url += url.includes('?') ? `&season=${season}` : `?season=${season}`;
+        let url = `http://localhost:5001/api/products?type=${mainCategory}`;
+        if (filter) url += `&filter=${filter}`;
+        if (season) url += `&season=${season}`;
 
         const res = await fetch(url);
         const data = await res.json();
@@ -29,8 +28,9 @@ const Products = () => {
     };
 
     fetchProducts();
-  }, [filter, season]);
+  }, [mainCategory, filter, season]);
 
+  // Button styles
   const buttonStyle = {
     padding: '10px 15px',
     margin: '5px',
@@ -39,61 +39,86 @@ const Products = () => {
     cursor: 'pointer',
     backgroundColor: '#4CAF50',
     color: 'white',
-    transition: 'transform 0.2s',
+    fontWeight: 'bold',
+    transition: 'all 0.2s ease-in-out',
   };
 
   const buttonHoverStyle = {
-    transform: 'scale(1.05)',
+    transform: 'scale(1.08)',
+    boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
   };
-
-  const [hoveredBtn, setHoveredBtn] = useState(null);
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: 'auto' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>🌼 Our Products 🌿</h2>
 
-      {/* Category Filter */}
+      {/* Main Category Buttons */}
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        {['', 'Flower', 'Plant', 'featured'].map((cat, idx) => (
+        {['plants', 'gadgets'].map((cat, idx) => (
           <button
             key={idx}
-            onClick={() => setFilter(cat)}
+            onClick={() => {
+              setMainCategory(cat);
+              setFilter('');
+              setSeason('');
+            }}
             style={{
               ...buttonStyle,
               ...(hoveredBtn === idx ? buttonHoverStyle : {}),
-              backgroundColor: filter === cat ? '#388E3C' : '#4CAF50',
+              backgroundColor: mainCategory === cat ? '#388E3C' : '#4CAF50',
             }}
             onMouseEnter={() => setHoveredBtn(idx)}
             onMouseLeave={() => setHoveredBtn(null)}
           >
-            {cat === '' ? 'All' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+            {cat === 'plants' ? 'Plants 🌱' : 'Garden Gadgets 🛠️'}
           </button>
         ))}
       </div>
 
-      {/* Seasonal Filter */}
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        {['', 'Spring', 'Summer', 'Autumn', 'Winter'].map((s, idx) => (
-          <button
-            key={idx}
-            onClick={() => setSeason(s)}
-            style={{
-              ...buttonStyle,
-              ...(hoveredBtn === idx + 10 ? buttonHoverStyle : {}),
-              backgroundColor: season === s ? '#388E3C' : '#4CAF50',
-            }}
-            onMouseEnter={() => setHoveredBtn(idx + 10)}
-            onMouseLeave={() => setHoveredBtn(null)}
-          >
-            {s === '' ? 'All Seasons' : s}
-          </button>
-        ))}
-      </div>
+      {/* Filters for Plants */}
+      {mainCategory === 'plants' && (
+        <>
+          <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+            {['', 'Flower', 'Plant', 'featured'].map((cat, idx) => (
+              <button
+                key={idx}
+                onClick={() => setFilter(cat)}
+                style={{
+                  ...buttonStyle,
+                  ...(hoveredBtn === idx + 10 ? buttonHoverStyle : {}),
+                  backgroundColor: filter === cat ? '#388E3C' : '#4CAF50',
+                }}
+                onMouseEnter={() => setHoveredBtn(idx + 10)}
+                onMouseLeave={() => setHoveredBtn(null)}
+              >
+                {cat === '' ? 'All' : cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </button>
+            ))}
+          </div>
 
-      {/* Loading Indicator */}
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            {['', 'Spring', 'Summer', 'Autumn', 'Winter'].map((s, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSeason(s)}
+                style={{
+                  ...buttonStyle,
+                  ...(hoveredBtn === idx + 20 ? buttonHoverStyle : {}),
+                  backgroundColor: season === s ? '#388E3C' : '#4CAF50',
+                }}
+                onMouseEnter={() => setHoveredBtn(idx + 20)}
+                onMouseLeave={() => setHoveredBtn(null)}
+              >
+                {s === '' ? 'All Seasons' : s}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+
       {loading && <p style={{ textAlign: 'center' }}>Loading products...</p>}
 
-      {/* Product Grid */}
+      {/* Products Grid */}
       <div
         style={{
           display: 'flex',
@@ -103,9 +128,7 @@ const Products = () => {
         }}
       >
         {products.length > 0 ? (
-          products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))
+          products.map((product) => <ProductCard key={product.id} product={product} />)
         ) : (
           !loading && <p style={{ textAlign: 'center' }}>No products found for selected filters.</p>
         )}

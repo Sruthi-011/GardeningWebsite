@@ -27,11 +27,11 @@ const Profile = () => {
     window.location.href = '/';
   };
 
-  if (!user) return <p>Loading profile...</p>;
+  if (!user) return <p style={loadingStyle}>Loading profile...</p>;
 
   return (
     <div style={containerStyle}>
-      <h2>👤 My Profile</h2>
+      <h2 style={titleStyle}>👤 My Profile</h2>
       <div style={cardStyle}>
         <p><strong>Name:</strong> {user.name}</p>
         <p><strong>Email:</strong> {user.email}</p>
@@ -39,7 +39,7 @@ const Profile = () => {
         <button style={logoutButtonStyle} onClick={handleLogout}>Logout</button>
       </div>
 
-      {/* Additional responsive & hover effects */}
+      {/* Responsive & hover effects */}
       <style>
         {`
           @media (max-width: 768px) {
@@ -54,7 +54,7 @@ const Profile = () => {
             transition: all 0.3s ease;
           }
 
-          div:hover {
+          div[style*="border: 1px solid"]:hover {
             transform: scale(1.02);
             transition: all 0.3s ease;
           }
@@ -66,11 +66,30 @@ const Profile = () => {
 
 // Styles
 const containerStyle = {
+  minHeight: '100vh',
+  backgroundImage: 'url("http://localhost:5001/uploads/Profile.jpg")',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: '70% center',
+  backgroundSize: 'contain',
   padding: '30px',
   textAlign: 'center',
   fontFamily: 'Arial, sans-serif',
-  backgroundColor: '#f0f8ff',
-  minHeight: '80vh'
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+};
+
+const titleStyle = {
+  marginBottom: '25px',
+  color: '#4CAF50',
+  textShadow: '1px 1px 3px rgba(0,0,0,0.5)',
+};
+
+const loadingStyle = {
+  fontSize: '18px',
+  color: '#4CAF50',
+  marginTop: '30px',
+  textShadow: '1px 1px 3px rgba(0,0,0,0.5)',
 };
 
 const cardStyle = {
@@ -80,7 +99,8 @@ const cardStyle = {
   border: '1px solid #ccc',
   borderRadius: '15px',
   boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
-  backgroundColor: '#ffffff'
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  textAlign: 'center',
 };
 
 const logoutButtonStyle = {
@@ -91,7 +111,7 @@ const logoutButtonStyle = {
   backgroundColor: '#4CAF50',
   color: 'white',
   cursor: 'pointer',
-  fontWeight: '600'
+  fontWeight: '600',
 };
 
 export default Profile;

@@ -60,85 +60,126 @@ const SharePlant = () => {
 
   return (
     <div style={containerStyle}>
-      <h2 style={titleStyle}>Share a Plant 🌿</h2>
+      <div style={overlayStyle}>
+        <h2 style={titleStyle}>Share a Plant 🌿</h2>
 
-      {message && <p style={{ ...messageStyle, color: message.includes('❌') ? '#ff4d4f' : '#4CAF50' }}>{message}</p>}
+        {message && (
+          <p
+            style={{
+              ...messageStyle,
+              color: message.includes('❌') ? '#ff4d4f' : '#4CAF50',
+            }}
+          >
+            {message}
+          </p>
+        )}
 
-      <form onSubmit={handleSubmit} encType="multipart/form-data" style={formStyle}>
-        <div style={inputGroupStyle}>
-          <label style={labelStyle}>Plant Name <span style={{color: 'red'}}>*</span>:</label>
-          <input
-            type="text"
-            value={plantName}
-            onChange={(e) => setPlantName(e.target.value)}
-            required
-            style={inputStyle}
-          />
-        </div>
+        <form
+          onSubmit={handleSubmit}
+          encType="multipart/form-data"
+          style={formStyle}
+        >
+          <div style={inputGroupStyle}>
+            <label style={labelStyle}>
+              Plant Name <span style={{ color: 'red' }}>*</span>:
+            </label>
+            <input
+              type="text"
+              value={plantName}
+              onChange={(e) => setPlantName(e.target.value)}
+              required
+              style={inputStyle}
+            />
+          </div>
 
-        <div style={inputGroupStyle}>
-          <label style={labelStyle}>Description:</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            style={{ ...inputStyle, height: '80px', resize: 'vertical' }}
-          />
-        </div>
+          <div style={inputGroupStyle}>
+            <label style={labelStyle}>Description:</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={{ ...inputStyle, height: '80px', resize: 'vertical' }}
+            />
+          </div>
 
-        <div style={inputGroupStyle}>
-          <label style={labelStyle}>Category:</label>
-          <input
-            type="text"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={inputStyle}
-          />
-        </div>
+          <div style={inputGroupStyle}>
+            <label style={labelStyle}>Category:</label>
+            <input
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
 
-        <div style={inputGroupStyle}>
-          <label style={labelStyle}>Quantity:</label>
-          <input
-            type="number"
-            min="1"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            style={inputStyle}
-          />
-        </div>
+          <div style={inputGroupStyle}>
+            <label style={labelStyle}>Quantity:</label>
+            <input
+              type="number"
+              min="1"
+              value={quantity}
+              onChange={(e) => setQuantity(e.target.value)}
+              style={inputStyle}
+            />
+          </div>
 
-        <div style={inputGroupStyle}>
-          <label style={labelStyle}>Image:</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
-            style={fileInputStyle}
-          />
-        </div>
+          <div style={inputGroupStyle}>
+            <label style={labelStyle}>Image:</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setImage(e.target.files[0])}
+              style={fileInputStyle}
+            />
+          </div>
 
-        <button type="submit" disabled={loading} style={buttonStyle}>
-          {loading ? 'Sharing...' : 'Share Plant'}
-        </button>
-      </form>
+          <button
+            type="submit"
+            disabled={loading}
+            style={buttonStyle}
+            onMouseOver={(e) => {
+              e.target.style.backgroundColor = '#45a049';
+              e.target.style.transform = 'scale(1.05)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.backgroundColor = '#4CAF50';
+              e.target.style.transform = 'scale(1)';
+            }}
+          >
+            {loading ? 'Sharing...' : 'Share Plant'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
 
 // Styles
 const containerStyle = {
-  padding: '30px 20px',
-  maxWidth: '500px',
-  margin: '40px auto',
+  minHeight: '100vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
   fontFamily: 'Arial, sans-serif',
-  backgroundColor: '#f7f9f7',
-  borderRadius: '10px',
-  boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+  backgroundImage:
+    'url("http://localhost:5001/uploads/Sharing.jpg")',
+  backgroundSize: 'cover',
+  backgroundPosition: 'center',
+  padding: '20px',
+};
+
+const overlayStyle = {
+  width: '100%',
+  maxWidth: '500px',
+  backgroundColor: 'rgba(255,255,255,0.95)',
+  padding: '30px',
+  borderRadius: '15px',
+  boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
 };
 
 const titleStyle = {
   textAlign: 'center',
   marginBottom: '20px',
-  color: '#4CAF50',
+  color: '#2e7d32',
 };
 
 const formStyle = {
@@ -158,8 +199,8 @@ const labelStyle = {
 };
 
 const inputStyle = {
-  padding: '8px 10px',
-  borderRadius: '5px',
+  padding: '10px',
+  borderRadius: '8px',
   border: '1px solid #ccc',
   fontSize: '14px',
 };
@@ -169,25 +210,21 @@ const fileInputStyle = {
 };
 
 const buttonStyle = {
-  padding: '10px 20px',
+  padding: '12px 0',
   border: 'none',
-  borderRadius: '5px',
+  borderRadius: '8px',
   backgroundColor: '#4CAF50',
   color: 'white',
   fontWeight: '600',
+  fontSize: '16px',
   cursor: 'pointer',
-  transition: 'background-color 0.3s',
+  transition: 'all 0.3s',
 };
 
 const messageStyle = {
   textAlign: 'center',
   fontWeight: '500',
   marginBottom: '15px',
-};
-
-// Hover effect for button
-buttonStyle[':hover'] = {
-  backgroundColor: '#45a049',
 };
 
 export default SharePlant;

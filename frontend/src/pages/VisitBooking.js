@@ -8,10 +8,10 @@ const VisitBooking = () => {
     const handleBooking = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
-        if (!token) return setMessage('Please login first');
+        if (!token) return setMessage('⚠️ Please login first');
 
         if (!visitDate || !timeSlot) {
-            setMessage('Please select a date and time slot');
+            setMessage('⚠️ Please select a date and time slot');
             return;
         }
 
@@ -40,72 +40,101 @@ const VisitBooking = () => {
 
     return (
         <div style={{
-            padding: '20px',
+            minHeight: '100vh',
+            padding: '40px 20px',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            flexDirection: 'column'
+            backgroundImage: 'url("http://localhost:5001/uploads/Visit.jpg")',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            fontFamily: 'Arial, sans-serif',
         }}>
-            <h2 style={{ marginBottom: '20px' }}>Book a Visit 🌿</h2>
-            {message && <p style={{ marginBottom: '15px', color: message.includes('❌') ? 'red' : 'green' }}>{message}</p>}
-            <form onSubmit={handleBooking} style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
+            <div style={{
                 width: '100%',
-                maxWidth: '400px',
-                gap: '15px',
-                backgroundColor: '#f7f7f7',
-                padding: '20px',
-                borderRadius: '10px',
-                boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                maxWidth: '450px',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                borderRadius: '15px',
+                padding: '30px',
+                boxShadow: '0 8px 20px rgba(0,0,0,0.15)',
+                textAlign: 'center'
             }}>
-                <input 
-                    type="date" 
-                    value={visitDate} 
-                    onChange={e => setVisitDate(e.target.value)} 
-                    required 
-                    style={{
-                        padding: '10px',
-                        borderRadius: '5px',
-                        border: '1px solid #ccc',
-                        width: '100%'
-                    }}
-                />
-                <select 
-                    value={timeSlot} 
-                    onChange={e => setTimeSlot(e.target.value)} 
-                    required
-                    style={{
-                        padding: '10px',
-                        borderRadius: '5px',
-                        border: '1px solid #ccc',
-                        width: '100%'
-                    }}
-                >
-                    <option value="">Select Time Slot</option>
-                    <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
-                    <option value="12:00 PM - 2:00 PM">12:00 PM - 2:00 PM</option>
-                    <option value="2:00 PM - 4:00 PM">2:00 PM - 4:00 PM</option>
-                </select>
-                <button 
-                    type="submit" 
-                    style={{
-                        backgroundColor: '#4CAF50',
-                        color: 'white',
-                        border: 'none',
-                        padding: '10px 20px',
-                        borderRadius: '5px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        transition: 'all 0.3s'
-                    }}
-                    onMouseOver={e => e.target.style.backgroundColor = '#45a049'}
-                    onMouseOut={e => e.target.style.backgroundColor = '#4CAF50'}
-                >
-                    Book Visit
-                </button>
-            </form>
+                <h2 style={{ marginBottom: '20px', color: '#2e7d32' }}>🌿 Book a Visit</h2>
+                
+                {message && (
+                    <p style={{
+                        marginBottom: '20px',
+                        color: message.includes('❌') || message.includes('⚠️') ? '#d32f2f' : '#388e3c',
+                        fontWeight: 'bold'
+                    }}>
+                        {message}
+                    </p>
+                )}
+
+                <form onSubmit={handleBooking} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                    <input 
+                        type="date"
+                        value={visitDate}
+                        onChange={e => setVisitDate(e.target.value)}
+                        required
+                        style={{
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #ccc',
+                            fontSize: '16px',
+                            transition: '0.3s',
+                        }}
+                        onFocus={e => e.target.style.borderColor = '#4CAF50'}
+                        onBlur={e => e.target.style.borderColor = '#ccc'}
+                    />
+
+                    <select 
+                        value={timeSlot}
+                        onChange={e => setTimeSlot(e.target.value)}
+                        required
+                        style={{
+                            padding: '12px',
+                            borderRadius: '8px',
+                            border: '1px solid #ccc',
+                            fontSize: '16px',
+                            transition: '0.3s'
+                        }}
+                        onFocus={e => e.target.style.borderColor = '#4CAF50'}
+                        onBlur={e => e.target.style.borderColor = '#ccc'}
+                    >
+                        <option value="">Select Time Slot</option>
+                        <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
+                        <option value="12:00 PM - 2:00 PM">12:00 PM - 2:00 PM</option>
+                        <option value="2:00 PM - 4:00 PM">2:00 PM - 4:00 PM</option>
+                    </select>
+
+                    <button 
+                        type="submit"
+                        style={{
+                            backgroundColor: '#4CAF50',
+                            color: 'white',
+                            border: 'none',
+                            padding: '12px 0',
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s',
+                        }}
+                        onMouseOver={e => {
+                            e.target.style.backgroundColor = '#45a049';
+                            e.target.style.transform = 'scale(1.05)';
+                        }}
+                        onMouseOut={e => {
+                            e.target.style.backgroundColor = '#4CAF50';
+                            e.target.style.transform = 'scale(1)';
+                        }}
+                    >
+                        Book Visit
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };

@@ -24,7 +24,7 @@ const PlantSharing = () => {
 
   return (
     <div style={containerStyle}>
-      <h2>🌱 Community Plant Sharing / Swap</h2>
+      <h2 style={titleStyle}>🌱 Community Plant Sharing / Swap</h2>
       {plants.length === 0 ? (
         <p style={emptyStyle}>No plants shared yet. Be the first to share!</p>
       ) : (
@@ -74,19 +74,36 @@ const PlantSharing = () => {
 
 // Styles
 const containerStyle = {
-  padding: '30px',
+  minHeight: '100vh',
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'center',
+  backgroundSize: 'cover', 
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '30px 20px',
   fontFamily: 'Arial, sans-serif',
-  textAlign: 'center',
+};
+
+const titleStyle = {
+  marginBottom: '25px',
+  color: '#2e7d32',
+  textShadow: '1px 1px 2px rgba(0,0,0,0.3)',
 };
 
 const loadingStyle = {
   fontSize: '18px',
   color: '#4CAF50',
+  textAlign: 'center',
+  marginTop: '30px',
 };
 
 const emptyStyle = {
   fontSize: '16px',
-  color: '#888',
+  color: '#fff',
+  textAlign: 'center',
+  marginTop: '20px',
+  textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
 };
 
 const gridStyle = {
@@ -102,7 +119,7 @@ const cardStyle = {
   margin: '10px',
   padding: '10px',
   width: '250px',
-  backgroundColor: '#f9f9f9',
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
   overflow: 'hidden',
 };
 

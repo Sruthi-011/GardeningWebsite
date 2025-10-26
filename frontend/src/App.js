@@ -12,13 +12,13 @@ import Orders from './pages/Orders';
 import Profile from './pages/Profile';
 import PlantSharing from './pages/PlantSharing';
 import SharePlant from './pages/SharePlant';
+import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   return (
     <Router>
       <Navbar />
 
-      {/* Main content */}
       <div style={{ minHeight: 'calc(100vh - 120px)' }}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -31,10 +31,10 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/plant-sharing" element={<PlantSharing />} />
           <Route path="/share-plant" element={<SharePlant />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
         </Routes>
       </div>
 
-      {/* Footer */}
       <Footer />
     </Router>
   );

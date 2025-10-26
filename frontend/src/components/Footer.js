@@ -8,7 +8,7 @@ const Footer = () => {
         <div style={sectionStyle}>
           <h3>About Us 🌱</h3>
           <p>
-            Welcome to My Gardening Website! We bring you beautiful plants, flowers, and gardening tips. 
+            Welcome to Root & Bloom! We bring you beautiful plants, flowers, and gardening tips. 
             Share your plants, book visits, and shop your favorite greenery online!
           </p>
         </div>
@@ -17,7 +17,7 @@ const Footer = () => {
         <div style={sectionStyle}>
           <h3>Contact Us 📞</h3>
           <p><strong>Address:</strong> 123 Green Lane, Garden City, India</p>
-          <p><strong>Email:</strong> support@gardeningwebsite.com</p>
+          <p><strong>Email:</strong> support@root&bloom.com</p>
           <p><strong>Phone:</strong> +91 98765 43210</p>
         </div>
 
@@ -34,13 +34,12 @@ const Footer = () => {
       </div>
 
       <p style={copyrightStyle}>
-        &copy; {new Date().getFullYear()} My Gardening Website. All rights reserved.
+        &copy; {new Date().getFullYear()} Root & Bloom. All rights reserved.
       </p>
     </footer>
   );
 };
 
-// Styles
 const footerStyle = {
   backgroundColor: '#4CAF50',
   color: 'white',

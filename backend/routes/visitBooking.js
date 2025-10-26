@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const protect = require('../middleware/authMiddleware');
+const { protect } = require('../middleware/authMiddleware'); // Correct import
 
 // Create a new visit booking
 router.post('/', protect, (req, res) => {

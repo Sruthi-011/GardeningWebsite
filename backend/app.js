@@ -1,5 +1,3 @@
-console.log('App loaded');
-
 const express = require('express');
 const cors = require('cors');
 const path = require('path'); 
@@ -15,6 +13,12 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Routes
+const adminUsersRoutes = require('./routes/adminUsers');
+app.use('/api/admin/users', adminUsersRoutes);
+
+const adminOrdersRoutes = require('./routes/adminOrders');
+app.use('/api/admin/orders', adminOrdersRoutes);
+
 const productsRoute = require('./routes/products');
 app.use('/api/products', productsRoute);
 
@@ -40,7 +44,5 @@ app.use('/api/plant-sharing', plantSharingRoute);
 app.get('/', (req, res) => {
     res.send('🌱 Gardening Website Backend is Running 🌼');
 });
-
-console.log('App exported');
 
 module.exports = app;

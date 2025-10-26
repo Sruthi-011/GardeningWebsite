@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const userEmail = localStorage.getItem('userEmail'); 
+  const adminEmail = "admin@example.com"; 
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userEmail');
     alert('Logged out successfully!');
     navigate('/');
   };
@@ -25,35 +26,17 @@ const Navbar = () => {
       top: 0,
       zIndex: 1000
     }}>
-      {/* Logo / Brand */}
       <h2 style={{ margin: 0, fontSize: '1.8rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
-        🌱 My Gardening Website
+        🌱 Root & Bloom
       </h2>
 
-      {/* Mobile Menu Button */}
-      <button
-        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        style={{
-          display: 'none',
-          background: 'transparent',
-          border: 'none',
-          fontSize: '1.5rem',
-          color: 'white',
-          cursor: 'pointer'
-        }}
-        className="mobile-menu-button"
-      >
-        ☰
-      </button>
-
-      {/* Menu Links */}
       <div style={{
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
         alignItems: 'center',
         gap: '15px',
-      }} className={isMobileMenuOpen ? 'mobile-menu-open' : ''}>
+      }}>
         <Link to="/" style={linkStyle}>Home</Link>
         <Link to="/products" style={linkStyle}>Products</Link>
         <Link to="/cart" style={linkStyle}>Cart</Link>
@@ -61,6 +44,13 @@ const Navbar = () => {
         <Link to="/plant-sharing" style={linkStyle}>Plant Sharing</Link>
         {token && <Link to="/share-plant" style={linkStyle}>Share a Plant</Link>}
         {token && <Link to="/orders" style={linkStyle}>Orders</Link>}
+
+        {/* ✅ Admin Dashboard Link */}
+        {token && userEmail === adminEmail && (
+          <Link to="/admin-dashboard" style={{ ...linkStyle, fontWeight: 'bold', color: '#FFD700' }}>
+            👑 Admin Panel
+          </Link>
+        )}
 
         {!token ? (
           <>
@@ -74,36 +64,10 @@ const Navbar = () => {
           </>
         )}
       </div>
-
-      {/* Styles */}
-      <style>
-        {`
-          @media (max-width: 768px) {
-            .mobile-menu-button {
-              display: block;
-            }
-            .mobile-menu-open {
-              display: flex;
-              flex-direction: column;
-              width: 100%;
-              margin-top: 10px;
-            }
-          }
-          a:hover {
-            color: #ffe066;
-            transition: color 0.3s;
-          }
-          button:hover {
-            opacity: 0.8;
-            transition: opacity 0.3s;
-          }
-        `}
-      </style>
     </nav>
   );
 };
 
-// Common link style
 const linkStyle = {
   margin: '5px 10px',
   color: 'white',
@@ -113,7 +77,6 @@ const linkStyle = {
   cursor: 'pointer',
 };
 
-// Logout button style
 const logoutButtonStyle = {
   margin: '5px 10px',
   color: 'white',
