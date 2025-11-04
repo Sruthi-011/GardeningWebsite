@@ -6,14 +6,19 @@ const SharePlant = () => {
   const [category, setCategory] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [image, setImage] = useState(null);
+  const [location, setLocation] = useState('');
+  const [status, setStatus] = useState('available');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [shareContact, setShareContact] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // ✅ Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!plantName) {
-      setMessage('🌱 Plant name is required');
+    if (!plantName.trim()) {
+      setMessage('❌ Please enter the plant name');
       return;
     }
 
@@ -25,7 +30,10 @@ const SharePlant = () => {
     formData.append('description', description);
     formData.append('category', category);
     formData.append('quantity', quantity);
+    formData.append('location', location);
+    formData.append('status', status);
     if (image) formData.append('image', image);
+    if (shareContact && phoneNumber.trim()) formData.append('phone_number', phoneNumber);
 
     try {
       const token = localStorage.getItem('token');
@@ -41,17 +49,21 @@ const SharePlant = () => {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage('🌱 Plant shared successfully!');
+        setMessage('🌿 Plant shared successfully!');
         setPlantName('');
         setDescription('');
         setCategory('');
         setQuantity(1);
         setImage(null);
+        setLocation('');
+        setStatus('available');
+        setPhoneNumber('');
+        setShareContact(false);
       } else {
         setMessage(data.error || '❌ Something went wrong');
       }
     } catch (err) {
-      console.log(err);
+      console.error(err);
       setMessage('❌ Server error');
     } finally {
       setLoading(false);
@@ -61,69 +73,51 @@ const SharePlant = () => {
   return (
     <div style={containerStyle}>
       <div style={overlayStyle}>
-        <h2 style={titleStyle}>Share a Plant 🌿</h2>
+        <h2 style={titleStyle}>🌱 Share a Plant with the Community</h2>
+        <p style={subtitleStyle}>
+          Upload your plant details so others can exchange, adopt, or share! 🌿
+        </p>
 
         {message && (
           <p
             style={{
               ...messageStyle,
-              color: message.includes('❌') ? '#ff4d4f' : '#4CAF50',
+              color: message.startsWith('❌') ? '#e53935' : '#2e7d32',
             }}
           >
             {message}
           </p>
         )}
 
-        <form
-          onSubmit={handleSubmit}
-          encType="multipart/form-data"
-          style={formStyle}
-        >
+        <form onSubmit={handleSubmit} encType="multipart/form-data" style={formStyle}>
+          {/* Plant Name */}
+          <InputField label="Plant Name *" value={plantName} onChange={setPlantName} required />
+
+          {/* Description */}
+          <InputField label="Description" type="textarea" value={description} onChange={setDescription} />
+
+          {/* Category */}
+          <InputField label="Category" value={category} onChange={setCategory} />
+
+          {/* Quantity */}
+          <InputField label="Quantity" type="number" value={quantity} onChange={setQuantity} />
+
+          {/* Location */}
+          <InputField label="Location" value={location} onChange={setLocation} placeholder="Enter your area or city" />
+
+          {/* Status */}
           <div style={inputGroupStyle}>
-            <label style={labelStyle}>
-              Plant Name <span style={{ color: 'red' }}>*</span>:
-            </label>
-            <input
-              type="text"
-              value={plantName}
-              onChange={(e) => setPlantName(e.target.value)}
-              required
-              style={inputStyle}
-            />
+            <label style={labelStyle}>Status:</label>
+            <select value={status} onChange={(e) => setStatus(e.target.value)} style={inputStyle}>
+              <option value="available">Available</option>
+              <option value="reserved">Reserved</option>
+              <option value="exchanged">Exchanged</option>
+            </select>
           </div>
 
+          {/* Image Upload */}
           <div style={inputGroupStyle}>
-            <label style={labelStyle}>Description:</label>
-            <textarea
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              style={{ ...inputStyle, height: '80px', resize: 'vertical' }}
-            />
-          </div>
-
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>Category:</label>
-            <input
-              type="text"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>Quantity:</label>
-            <input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              style={inputStyle}
-            />
-          </div>
-
-          <div style={inputGroupStyle}>
-            <label style={labelStyle}>Image:</label>
+            <label style={labelStyle}>Upload Plant Image:</label>
             <input
               type="file"
               accept="image/*"
@@ -132,20 +126,51 @@ const SharePlant = () => {
             />
           </div>
 
+          {/* Contact Sharing Option */}
+          <div style={inputGroupStyle}>
+            <label style={labelStyle}>Would you like to share your contact?</label>
+            <div style={radioGroupStyle}>
+              <label>
+                <input
+                  type="radio"
+                  name="shareContact"
+                  checked={shareContact === true}
+                  onChange={() => setShareContact(true)}
+                />{' '}
+                Yes
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="shareContact"
+                  checked={shareContact === false}
+                  onChange={() => setShareContact(false)}
+                />{' '}
+                No
+              </label>
+            </div>
+          </div>
+
+          {/* Phone Number Field */}
+          {shareContact && (
+            <InputField
+              label="Phone Number"
+              type="tel"
+              placeholder="Enter your contact number"
+              value={phoneNumber}
+              onChange={setPhoneNumber}
+            />
+          )}
+
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
             style={buttonStyle}
-            onMouseOver={(e) => {
-              e.target.style.backgroundColor = '#45a049';
-              e.target.style.transform = 'scale(1.05)';
-            }}
-            onMouseOut={(e) => {
-              e.target.style.backgroundColor = '#4CAF50';
-              e.target.style.transform = 'scale(1)';
-            }}
+            onMouseOver={(e) => (e.target.style.backgroundColor = '#388e3c')}
+            onMouseOut={(e) => (e.target.style.backgroundColor = '#4CAF50')}
           >
-            {loading ? 'Sharing...' : 'Share Plant'}
+            {loading ? 'Sharing...' : 'Share Plant 🌿'}
           </button>
         </form>
       </div>
@@ -153,62 +178,59 @@ const SharePlant = () => {
   );
 };
 
-// Styles
+// 🌿 Reusable Input Field Component
+const InputField = ({ label, type = 'text', value, onChange, ...props }) => (
+  <div style={inputGroupStyle}>
+    <label style={labelStyle}>{label}:</label>
+    {type === 'textarea' ? (
+      <textarea
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={{ ...inputStyle, height: '80px', resize: 'vertical' }}
+        {...props}
+      />
+    ) : (
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        style={inputStyle}
+        {...props}
+      />
+    )}
+  </div>
+);
+
+// 🌿 Inline Styles
 const containerStyle = {
   minHeight: '100vh',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  fontFamily: 'Arial, sans-serif',
-  backgroundImage:
-    'url("http://localhost:5001/uploads/Sharing.jpg")',
+  fontFamily: "'Poppins', sans-serif",
+  backgroundImage: 'url("http://localhost:5001/uploads/Sharing.jpg")',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
-  padding: '20px',
+  padding: '30px',
 };
 
 const overlayStyle = {
   width: '100%',
-  maxWidth: '500px',
+  maxWidth: '550px',
   backgroundColor: 'rgba(255,255,255,0.95)',
-  padding: '30px',
-  borderRadius: '15px',
-  boxShadow: '0 8px 20px rgba(0,0,0,0.2)',
+  padding: '35px',
+  borderRadius: '18px',
+  boxShadow: '0 8px 25px rgba(0,0,0,0.25)',
 };
 
-const titleStyle = {
-  textAlign: 'center',
-  marginBottom: '20px',
-  color: '#2e7d32',
-};
-
-const formStyle = {
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const inputGroupStyle = {
-  marginBottom: '15px',
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const labelStyle = {
-  marginBottom: '5px',
-  fontWeight: '500',
-};
-
-const inputStyle = {
-  padding: '10px',
-  borderRadius: '8px',
-  border: '1px solid #ccc',
-  fontSize: '14px',
-};
-
-const fileInputStyle = {
-  padding: '5px 0',
-};
-
+const titleStyle = { textAlign: 'center', color: '#2e7d32', fontSize: '1.9rem', marginBottom: '10px' };
+const subtitleStyle = { textAlign: 'center', color: '#555', fontSize: '0.95rem', marginBottom: '25px' };
+const formStyle = { display: 'flex', flexDirection: 'column' };
+const inputGroupStyle = { marginBottom: '15px', display: 'flex', flexDirection: 'column' };
+const labelStyle = { marginBottom: '5px', fontWeight: '500', color: '#333' };
+const inputStyle = { padding: '10px', borderRadius: '8px', border: '1px solid #ccc', fontSize: '14px' };
+const fileInputStyle = { padding: '5px 0' };
+const radioGroupStyle = { display: 'flex', gap: '20px', marginTop: '5px' };
 const buttonStyle = {
   padding: '12px 0',
   border: 'none',
@@ -218,13 +240,8 @@ const buttonStyle = {
   fontWeight: '600',
   fontSize: '16px',
   cursor: 'pointer',
-  transition: 'all 0.3s',
+  transition: 'all 0.3s ease',
 };
-
-const messageStyle = {
-  textAlign: 'center',
-  fontWeight: '500',
-  marginBottom: '15px',
-};
+const messageStyle = { textAlign: 'center', fontWeight: '500', marginBottom: '15px' };
 
 export default SharePlant;

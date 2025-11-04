@@ -37,7 +37,7 @@ const ReviewForm = ({ productId, onReviewAdded }) => {
         alert('Review added successfully!');
         setRating(5);
         setComment('');
-        onReviewAdded(); 
+        onReviewAdded();
       } else {
         alert(data.error || 'Failed to add review');
       }
@@ -50,10 +50,16 @@ const ReviewForm = ({ productId, onReviewAdded }) => {
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: '10px' }}>
       <label>
-        Rating: 
-        <select value={rating} onChange={(e) => setRating(Number(e.target.value))} style={{ marginLeft: '5px' }}>
+        Rating:
+        <select
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+          style={{ marginLeft: '5px' }}
+        >
           {[1, 2, 3, 4, 5].map((r) => (
-            <option key={r} value={r}>{r}</option>
+            <option key={r} value={r}>
+              {r}
+            </option>
           ))}
         </select>
       </label>
@@ -69,8 +75,8 @@ const ReviewForm = ({ productId, onReviewAdded }) => {
       <button
         type="submit"
         style={{ ...buttonStyle, backgroundColor: '#4CAF50', marginTop: '5px' }}
-        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#45A049'}
-        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#4CAF50'}
+        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#45A049')}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = '#4CAF50')}
       >
         Submit Review
       </button>
@@ -82,6 +88,7 @@ const ProductCard = ({ product }) => {
   const [reviews, setReviews] = useState([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
   const [showReviews, setShowReviews] = useState(false);
+  const [hovered, setHovered] = useState(false); // Added for card hover
 
   const fetchReviews = useCallback(async () => {
     setLoadingReviews(true);
@@ -126,17 +133,38 @@ const ProductCard = ({ product }) => {
     ? `http://localhost:5001${product.image_url}`
     : product.image_url;
 
+  // Card dynamic hover effect
+  const dynamicCardStyle = {
+    ...cardStyle,
+    transform: hovered ? 'scale(1.05)' : 'scale(1)',
+    boxShadow: hovered
+      ? '0 10px 25px rgba(0, 0, 0, 0.25)'
+      : '0 4px 12px rgba(0, 0, 0, 0.1)',
+    border: hovered ? '1px solid #4CAF50' : '1px solid #ccc',
+  };
+
   return (
-    <div style={cardStyle}>
+    <div
+      style={dynamicCardStyle}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       {product.is_featured === 1 && <span style={badgeStyle}>🌟 Featured</span>}
 
       <img src={imageUrl} alt={product.name} style={imageStyle} />
       <h3 style={nameStyle}>{product.name}</h3>
       <p style={descStyle}>{product.description}</p>
       <p style={priceStyle}>₹{product.price}</p>
-      <p><strong>Category:</strong> {product.category || 'N/A'}</p>
-      <p><strong>Season:</strong> {product.season || 'N/A'}</p>
-      <p><strong>Stock:</strong> {product.stock > 0 ? `${product.stock} available` : 'Out of stock'}</p>
+      <p>
+        <strong>Category:</strong> {product.category || 'N/A'}
+      </p>
+      <p>
+        <strong>Season:</strong> {product.season || 'N/A'}
+      </p>
+      <p>
+        <strong>Stock:</strong>{' '}
+        {product.stock > 0 ? `${product.stock} available` : 'Out of stock'}
+      </p>
 
       {/* Add to Cart Button */}
       <button
@@ -147,12 +175,16 @@ const ProductCard = ({ product }) => {
           backgroundColor: product.stock === 0 ? '#ccc' : '#4CAF50',
         }}
         onMouseEnter={(e) => {
-          if (product.stock !== 0) e.currentTarget.style.transform = 'scale(1.05)';
-          if (product.stock !== 0) e.currentTarget.style.backgroundColor = '#45A049';
+          if (product.stock !== 0) {
+            e.currentTarget.style.transform = 'scale(1.05)';
+            e.currentTarget.style.backgroundColor = '#45A049';
+          }
         }}
         onMouseLeave={(e) => {
-          if (product.stock !== 0) e.currentTarget.style.transform = 'scale(1)';
-          if (product.stock !== 0) e.currentTarget.style.backgroundColor = '#4CAF50';
+          if (product.stock !== 0) {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.backgroundColor = '#4CAF50';
+          }
         }}
       >
         {product.stock === 0 ? 'Out of Stock' : 'Add to Cart'}
@@ -194,8 +226,9 @@ const cardStyle = {
   position: 'relative',
   boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
   borderRadius: '10px',
-  transition: 'transform 0.2s, box-shadow 0.2s',
-  fontFamily: 'Arial, sans-serif'
+  transition: 'all 0.3s ease-in-out',
+  fontFamily: 'Arial, sans-serif',
+  backgroundColor: '#fff',
 };
 
 const badgeStyle = {
@@ -207,7 +240,7 @@ const badgeStyle = {
   padding: '3px 8px',
   borderRadius: '5px',
   fontWeight: 'bold',
-  fontSize: '0.8em'
+  fontSize: '0.8em',
 };
 
 const imageStyle = {
@@ -215,26 +248,26 @@ const imageStyle = {
   height: '160px',
   objectFit: 'cover',
   borderRadius: '5px',
-  marginBottom: '10px'
+  marginBottom: '10px',
 };
 
 const nameStyle = {
   fontSize: '1.1em',
   margin: '5px 0',
-  color: '#333'
+  color: '#333',
 };
 
 const descStyle = {
   fontSize: '0.9em',
   margin: '5px 0',
   color: '#555',
-  minHeight: '40px'
+  minHeight: '40px',
 };
 
 const priceStyle = {
   fontWeight: 'bold',
   margin: '5px 0',
-  color: '#4CAF50'
+  color: '#4CAF50',
 };
 
 const buttonStyle = {
@@ -245,7 +278,7 @@ const buttonStyle = {
   color: 'white',
   fontWeight: 'bold',
   transition: 'all 0.2s ease-in-out',
-  cursor: 'pointer'
+  cursor: 'pointer',
 };
 
 export default ProductCard;

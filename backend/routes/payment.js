@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { protect } = require('../middleware/authMiddleware'); // ✅ Corrected import
+const { protect } = require('../middleware/authMiddleware');
 
 // Placeholder payment route
 router.post('/', protect, (req, res) => {

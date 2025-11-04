@@ -1,30 +1,51 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const { protect } = require('../middleware/authMiddleware'); // Correct import
+const { protect } = require('../middleware/authMiddleware');
 
-// Create a new visit booking
+/* -------------------------------------------------------------------------- */
+/* 🗓️ POST: Create a new visit booking (no slot restriction) */
+/* -------------------------------------------------------------------------- */
 router.post('/', protect, (req, res) => {
-    const { visit_date, time_slot } = req.body;
+  const { visit_date, time_slot } = req.body;
 
-    if (!visit_date || !time_slot) {
-        return res.status(400).json({ error: 'Please provide visit date and time slot' });
+  if (!visit_date || !time_slot) {
+    return res.status(400).json({ error: 'Please provide visit date and time slot' });
+  }
+
+  // ✅ Directly insert new booking (no checking for existing slots)
+  const insertQuery = `
+    INSERT INTO visit_bookings (user_id, visit_date, time_slot, status)
+    VALUES (?, ?, ?, 'Pending')
+  `;
+
+  db.query(insertQuery, [req.user.id, visit_date, time_slot], (err, results) => {
+    if (err) {
+      console.error('Error creating booking:', err);
+      return res.status(500).json({ error: 'Database error while creating booking' });
     }
 
-    const query = 'INSERT INTO visit_bookings (user_id, visit_date, time_slot) VALUES (?, ?, ?)';
-    db.query(query, [req.user.id, visit_date, time_slot], (err, results) => {
-        if (err) return res.status(500).json({ error: 'Database error' });
-        res.json({ message: 'Visit booked successfully', bookingId: results.insertId });
-    });
+    res.json({ message: '✅ Visit booked successfully', bookingId: results.insertId });
+  });
 });
 
-// Get all bookings of logged-in user
-router.get('/', protect, (req, res) => {
-    const query = 'SELECT * FROM visit_bookings WHERE user_id = ?';
-    db.query(query, [req.user.id], (err, results) => {
-        if (err) return res.status(500).json({ error: 'Database error' });
-        res.json(results);
-    });
+/* -------------------------------------------------------------------------- */
+/* 📅 GET: All bookings of logged-in user (with status) */
+/* -------------------------------------------------------------------------- */
+router.get('/my-bookings', protect, (req, res) => {
+  const query = `
+    SELECT id, visit_date, time_slot, status, created_at 
+    FROM visit_bookings 
+    WHERE user_id = ? 
+    ORDER BY visit_date DESC
+  `;
+  db.query(query, [req.user.id], (err, results) => {
+    if (err) {
+      console.error('Error fetching user bookings:', err);
+      return res.status(500).json({ error: 'Database error while fetching bookings' });
+    }
+    res.json(results);
+  });
 });
 
 module.exports = router;
