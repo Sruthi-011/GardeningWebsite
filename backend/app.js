@@ -40,6 +40,7 @@ app.use('/api/cart', cartRoute);
 const plantSharingRoute = require('./routes/plantSharing');
 app.use('/api/plant-sharing', plantSharingRoute);
 
+
 // Test route
 app.get('/', (req, res) => {
     res.send('🌱 Gardening Website Backend is Running 🌼');

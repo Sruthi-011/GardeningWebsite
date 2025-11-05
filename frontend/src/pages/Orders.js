@@ -80,7 +80,7 @@ const Orders = () => {
         )}
       </div>
 
-      {/* Right section - Image */}
+      {/* ✅ Right section - Full height image */}
       <div style={rightImageStyle}></div>
 
       <style>
@@ -90,8 +90,10 @@ const Orders = () => {
               flex-direction: column;
             }
             div[style*="background-image"] {
-              height: 220px;
+              height: 250px;
+              width: 100%;
               background-size: cover;
+              background-position: center;
             }
           }
         `}
@@ -104,8 +106,10 @@ const Orders = () => {
 const mainContainerStyle = {
   display: 'flex',
   flexDirection: 'row',
-  minHeight: '100vh',
+  height: '100vh', // ✅ full viewport height
+  width: '100vw',  // ✅ full viewport width
   fontFamily: 'Arial, sans-serif',
+  overflow: 'hidden', // prevent scrollbars from appearing
 };
 
 const leftSectionStyle = {
@@ -116,14 +120,17 @@ const leftSectionStyle = {
   alignItems: 'center',
   justifyContent: 'flex-start',
   backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  overflowY: 'auto',
 };
 
 const rightImageStyle = {
   flex: 1,
   backgroundImage: 'url("http://localhost:5001/uploads/Orders.jpeg")',
   backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'center right',
-  backgroundSize: 'cover',
+  backgroundPosition: 'center center',
+  backgroundSize: 'cover', // ✅ fill entire half while maintaining aspect ratio
+  height: '100vh',
+  width: '50vw', // ✅ half of the full page width
 };
 
 const titleStyle = {
