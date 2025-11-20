@@ -64,7 +64,6 @@ const Profile = () => {
   );
 };
 
-// Styles
 const containerStyle = {
   minHeight: '100vh',
   backgroundImage: 'url("http://localhost:5001/uploads/Profile.jpg")',

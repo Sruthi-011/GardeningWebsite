@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
-const db = require('../config/db'); // Your MySQL connection
+const db = require('../config/db'); 
 
-// Middleware to protect routes (requires login)
 const protect = (req, res, next) => {
     const authHeader = req.headers.authorization;
 
@@ -22,8 +21,8 @@ const protect = (req, res, next) => {
                 return res.status(401).json({ error: 'User not found' });
             }
 
-            req.user = results[0]; // Attach user info including is_admin
-            console.log('✅ protect middleware: req.user =', req.user); // <-- Add this line
+            req.user = results[0]; 
+            console.log('✅ protect middleware: req.user =', req.user); 
             next();
         });
     } catch (err) {
@@ -32,9 +31,8 @@ const protect = (req, res, next) => {
     }
 };
 
-// Middleware to allow only Admin users
 const isAdmin = (req, res, next) => {
-    if (req.user && req.user.is_admin === 1) { // MySQL tinyint for admin
+    if (req.user && req.user.is_admin === 1) { 
         next();
     } else {
         return res.status(403).json({ error: 'Access denied: Admins only' });

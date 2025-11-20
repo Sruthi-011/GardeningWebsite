@@ -10,7 +10,6 @@ const ProductsAdmin = () => {
 
   const token = localStorage.getItem('token');
 
-  // Fetch products
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -51,7 +50,6 @@ const ProductsAdmin = () => {
     fetchProducts();
   }, [fetchProducts]);
 
-  // Update product
   const updateProduct = async (id, updatedFields) => {
     try {
       const res = await fetch(`http://localhost:5001/api/admin/products/${id}`, {
@@ -78,7 +76,6 @@ const ProductsAdmin = () => {
     }
   };
 
-  // Delete product
   const deleteProduct = async (id) => {
     if (!window.confirm('Are you sure you want to delete this product?')) return;
 

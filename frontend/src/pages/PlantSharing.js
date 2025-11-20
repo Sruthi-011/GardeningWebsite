@@ -6,7 +6,6 @@ const PlantSharing = () => {
   const userEmail = localStorage.getItem('userEmail');
   const token = localStorage.getItem('token');
 
-  // 🌿 Fetch all shared plants
   useEffect(() => {
     const fetchPlants = async () => {
       try {
@@ -24,7 +23,6 @@ const PlantSharing = () => {
     fetchPlants();
   }, []);
 
-  // 🔄 Update plant status (for owner only)
   const handleStatusChange = async (plantId, newStatus) => {
     if (!token) {
       alert('Please login to update your plant status.');
@@ -119,7 +117,6 @@ const PlantSharing = () => {
         </div>
       )}
 
-      {/* ✅ Hover + Responsive Animations */}
       <style>
         {`
           @media (max-width: 768px) {
@@ -151,7 +148,6 @@ const PlantSharing = () => {
   );
 };
 
-// 🌿 Styles
 const containerStyle = {
   minHeight: '100vh',
   background: 'linear-gradient(180deg, #e8f5e9, #ffffff)',

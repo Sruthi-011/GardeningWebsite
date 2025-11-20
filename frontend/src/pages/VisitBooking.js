@@ -12,9 +12,6 @@ const VisitBooking = () => {
     "2:00 PM - 4:00 PM"
   ];
 
-  /* -------------------------------------------------------------------------- */
-  /* 📋 Fetch user's own bookings */
-  /* -------------------------------------------------------------------------- */
   const fetchMyBookings = async () => {
     const token = localStorage.getItem('token');
     if (!token) return;
@@ -34,9 +31,6 @@ const VisitBooking = () => {
     fetchMyBookings();
   }, []);
 
-  /* -------------------------------------------------------------------------- */
-  /* 🪴 Handle booking submission */
-  /* -------------------------------------------------------------------------- */
   const handleBooking = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem('token');
@@ -62,7 +56,7 @@ const VisitBooking = () => {
         setMessage('✅ Visit booked successfully!');
         setVisitDate('');
         setTimeSlot('');
-        fetchMyBookings(); // 🔄 Refresh user's bookings
+        fetchMyBookings();
       } else {
         setMessage(data.error || '❌ Booking failed');
       }

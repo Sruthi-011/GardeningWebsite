@@ -38,7 +38,6 @@ const Orders = () => {
 
   return (
     <div style={mainContainerStyle}>
-      {/* Left section - Orders */}
       <div style={leftSectionStyle}>
         <h2 style={titleStyle}>Your Orders 📦</h2>
 
@@ -80,7 +79,6 @@ const Orders = () => {
         )}
       </div>
 
-      {/* ✅ Right section - Full height image */}
       <div style={rightImageStyle}></div>
 
       <style>
@@ -102,14 +100,13 @@ const Orders = () => {
   );
 };
 
-// Styles
 const mainContainerStyle = {
   display: 'flex',
   flexDirection: 'row',
-  height: '100vh', // ✅ full viewport height
-  width: '100vw',  // ✅ full viewport width
+  height: '100vh',
+  width: '100vw',
   fontFamily: 'Arial, sans-serif',
-  overflow: 'hidden', // prevent scrollbars from appearing
+  overflow: 'hidden',
 };
 
 const leftSectionStyle = {
@@ -128,9 +125,9 @@ const rightImageStyle = {
   backgroundImage: 'url("http://localhost:5001/uploads/Orders.jpeg")',
   backgroundRepeat: 'no-repeat',
   backgroundPosition: 'center center',
-  backgroundSize: 'cover', // ✅ fill entire half while maintaining aspect ratio
+  backgroundSize: 'cover',
   height: '100vh',
-  width: '50vw', // ✅ half of the full page width
+  width: '50vw',
 };
 
 const titleStyle = {

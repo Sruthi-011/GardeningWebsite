@@ -8,7 +8,6 @@ const UsersAdmin = () => {
 
   const token = localStorage.getItem('token');
 
-  // Fetch users from backend
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -50,7 +49,6 @@ const UsersAdmin = () => {
     fetchUsers();
   }, [fetchUsers]);
 
-  // Block user
   const blockUser = async (id) => {
     if (!window.confirm('Are you sure you want to block this user?')) return;
 
@@ -76,7 +74,6 @@ const UsersAdmin = () => {
     }
   };
 
-  // Unblock user
   const unblockUser = async (id) => {
     if (!window.confirm('Are you sure you want to unblock this user?')) return;
 

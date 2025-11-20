@@ -6,6 +6,12 @@ const adminProductsRoutes = require('./routes/adminProducts');
 const adminVisitRoutes = require("./routes/adminRoutes");
 const recommendationRoutes = require('./routes/recommendationRoutes');
 
+
+const paymentRoute = require('./routes/payment');
+app.use('/api/payment', paymentRoute);
+
+
+
 app.use('/api/plant-sharing', plantSharingRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin/products', adminProductsRoutes);

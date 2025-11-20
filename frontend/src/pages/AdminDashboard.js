@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ProductsAdmin from './ProductsAdmin';
 import UsersAdmin from './UsersAdmin';
 import OrdersAdmin from './OrdersAdmin';
-import AdminVisits from './AdminVisits'; // ✅ import added
+import AdminVisits from './AdminVisits';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
@@ -11,7 +11,7 @@ const AdminDashboard = () => {
     { key: 'products', label: 'Manage Products' },
     { key: 'users', label: 'Manage Users' },
     { key: 'orders', label: 'View Orders' },
-    { key: 'visits', label: 'Manage Visit Bookings' }, // ✅ new tab added
+    { key: 'visits', label: 'Manage Visit Bookings' },
   ];
 
   return (
@@ -62,7 +62,7 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* 🌸 Main Content */}
+      {/* Main Content */}
       <div
         style={{
           flex: 1,
@@ -74,7 +74,7 @@ const AdminDashboard = () => {
         {activeTab === 'products' && <ProductsAdmin />}
         {activeTab === 'users' && <UsersAdmin />}
         {activeTab === 'orders' && <OrdersAdmin />}
-        {activeTab === 'visits' && <AdminVisits />} {/* ✅ show Visit Bookings */}
+        {activeTab === 'visits' && <AdminVisits />}
       </div>
     </div>
   );

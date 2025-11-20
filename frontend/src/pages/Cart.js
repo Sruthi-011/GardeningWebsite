@@ -11,7 +11,6 @@ const Cart = () => {
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
-  // 🧾 Load cart items
   useEffect(() => {
     const fetchCart = async () => {
       if (!token) return;
@@ -28,7 +27,6 @@ const Cart = () => {
     fetchCart();
   }, [token]);
 
-  // ➕ and ➖ quantity functions
   const increaseQuantity = async (cartId, currentQuantity, stock) => {
     if (currentQuantity >= stock) return alert('❌ Cannot add more. Stock limit reached.');
     try {
@@ -68,13 +66,11 @@ const Cart = () => {
     }
   };
 
-  // 🧾 Checkout button click
   const handleCheckout = () => {
     if (cartItems.length === 0) return alert('Your cart is empty');
     setShowCheckoutForm(true);
   };
 
-  // 🪙 Place order
   const handlePlaceOrder = async () => {
     if (!address || !phone) return alert('Please fill in address and phone number.');
 
@@ -86,7 +82,6 @@ const Cart = () => {
 
     const total_price = itemsForCheckout.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    // COD flow
     if (paymentMethod === 'COD') {
       try {
         await axios.post(
@@ -102,7 +97,6 @@ const Cart = () => {
         alert('❌ Checkout failed.');
       }
     } else {
-      // Online Payment via Razorpay
       try {
         const { data: order } = await axios.post(
           'http://localhost:5001/api/payment/orders',
@@ -114,12 +108,11 @@ const Cart = () => {
           key: process.env.REACT_APP_RAZORPAY_KEY_ID,
           amount: order.amount,
           currency: 'INR',
-          name: 'GreenLeaf Gardening',
+          name: 'Root & Bloom',
           description: 'Plant Purchase Payment',
           order_id: order.id,
           handler: async function (response) {
             try {
-              // Verify and create final order
               await axios.post(
                 'http://localhost:5001/api/cart/checkout',
                 {
@@ -159,7 +152,6 @@ const Cart = () => {
     }
   };
 
-  // Load Razorpay script
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
@@ -171,7 +163,6 @@ const Cart = () => {
     return <p style={{ textAlign: 'center', marginTop: '20px' }}>Please login to view your cart.</p>;
   }
 
-  // ---------- UI BELOW ----------
   return (
     <div style={containerStyle}>
       <h2 style={titleStyle}>Your Cart 🛒</h2>
@@ -234,7 +225,6 @@ const Cart = () => {
   );
 };
 
-// ---------- Styles ----------
 const containerStyle = { padding: '20px', textAlign: 'center' };
 const titleStyle = { color: '#4CAF50' };
 const emptyStyle = { color: '#777' };

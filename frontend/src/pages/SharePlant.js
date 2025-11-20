@@ -13,7 +13,6 @@ const SharePlant = () => {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // ✅ Form submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -90,22 +89,12 @@ const SharePlant = () => {
         )}
 
         <form onSubmit={handleSubmit} encType="multipart/form-data" style={formStyle}>
-          {/* Plant Name */}
           <InputField label="Plant Name *" value={plantName} onChange={setPlantName} required />
-
-          {/* Description */}
           <InputField label="Description" type="textarea" value={description} onChange={setDescription} />
-
-          {/* Category */}
           <InputField label="Category" value={category} onChange={setCategory} />
-
-          {/* Quantity */}
           <InputField label="Quantity" type="number" value={quantity} onChange={setQuantity} />
-
-          {/* Location */}
           <InputField label="Location" value={location} onChange={setLocation} placeholder="Enter your area or city" />
 
-          {/* Status */}
           <div style={inputGroupStyle}>
             <label style={labelStyle}>Status:</label>
             <select value={status} onChange={(e) => setStatus(e.target.value)} style={inputStyle}>
@@ -178,7 +167,7 @@ const SharePlant = () => {
   );
 };
 
-// 🌿 Reusable Input Field Component
+// Reusable Input Field Component
 const InputField = ({ label, type = 'text', value, onChange, ...props }) => (
   <div style={inputGroupStyle}>
     <label style={labelStyle}>{label}:</label>
@@ -201,7 +190,7 @@ const InputField = ({ label, type = 'text', value, onChange, ...props }) => (
   </div>
 );
 
-// 🌿 Inline Styles
+// Inline Styles
 const containerStyle = {
   minHeight: '100vh',
   display: 'flex',

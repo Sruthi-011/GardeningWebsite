@@ -1,17 +1,30 @@
 const express = require('express');
+const Razorpay = require('razorpay');
+require('dotenv').config();
+
 const router = express.Router();
-const { protect } = require('../middleware/authMiddleware');
 
-// Placeholder payment route
-router.post('/', protect, (req, res) => {
-    const { orderId, amount } = req.body;
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
-    if (!orderId || !amount) {
-        return res.status(400).json({ error: 'Please provide order ID and amount' });
-    }
+router.post('/orders', async (req, res) => {
+  try {
+    const { amount } = req.body;
 
-    // Simulate successful payment
-    res.json({ message: 'Payment successful', orderId, amount });
+    const options = {
+      amount: amount * 100,
+      currency: 'INR',
+      receipt: `order_rcptid_${Date.now()}`,
+    };
+
+    const order = await razorpay.orders.create(options);
+    res.json(order);
+  } catch (err) {
+    console.error('Error creating Razorpay order:', err);
+    res.status(500).json({ message: 'Error creating Razorpay order' });
+  }
 });
 
 module.exports = router;

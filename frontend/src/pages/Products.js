@@ -11,9 +11,6 @@ const Products = () => {
   const [loading, setLoading] = useState(false);
   const [hoveredBtn, setHoveredBtn] = useState(null);
 
-  /* -------------------------------------------------------------------------- */
-  /* 🌿 Fetch All Products Based on Filters */
-  /* -------------------------------------------------------------------------- */
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -35,13 +32,10 @@ const Products = () => {
     fetchProducts();
   }, [mainCategory, filter, season]);
 
-  /* -------------------------------------------------------------------------- */
-  /* 🌱 Fetch Personalized Recommendations */
-  /* -------------------------------------------------------------------------- */
   useEffect(() => {
     const fetchRecommendations = async () => {
       const token = localStorage.getItem('token');
-      if (!token) return; // Skip if not logged in
+      if (!token) return;
 
       try {
         const res = await fetch('http://localhost:5001/api/recommendations', {
@@ -60,9 +54,6 @@ const Products = () => {
     fetchRecommendations();
   }, []);
 
-  /* -------------------------------------------------------------------------- */
-  /* 🎨 Button Styles */
-  /* -------------------------------------------------------------------------- */
   const buttonStyle = {
     padding: '10px 15px',
     margin: '5px',
@@ -80,14 +71,11 @@ const Products = () => {
     boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
   };
 
-  /* -------------------------------------------------------------------------- */
-  /* 🌸 UI Rendering */
-  /* -------------------------------------------------------------------------- */
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: 'auto' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>🌼 Our Products 🌿</h2>
 
-      {/* 🌿 Recommendations Section */}
+      {/* Recommendations Section */}
       {recommendations.length > 0 && (
         <div
           style={{
