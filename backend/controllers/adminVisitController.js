@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-// ✅ Fetch all visit bookings
+//Fetch all visit bookings
 exports.getAllVisits = (req, res) => {
   const query = `
     SELECT vb.id, vb.user_id, u.name AS user_name, u.email,
@@ -19,7 +19,7 @@ exports.getAllVisits = (req, res) => {
   });
 };
 
-// ✅ Update visit status (Approve / Deny)
+// Update visit status (Approve / Deny)
 exports.updateVisitStatus = (req, res) => {
   const { id } = req.params;
   const { status } = req.body;

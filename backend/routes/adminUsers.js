@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../config/db');
 const { protect, isAdmin } = require('../middleware/authMiddleware');
 
-// GET all users (Admin)
+// GET all users
 router.get('/', protect, isAdmin, (req, res) => {
     const query = 'SELECT id, name, email, role, created_at, is_admin, is_blocked FROM users ORDER BY created_at DESC';
     db.query(query, (err, results) => {

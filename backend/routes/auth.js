@@ -10,7 +10,7 @@ const { protect, isAdmin } = require('../middleware/authMiddleware');
 // Register a new user
 router.post('/register', async (req, res) => {
     console.log('POST /register called');
-    const { name, email, password, is_admin } = req.body; // Optional admin flag
+    const { name, email, password, is_admin } = req.body;
 
     if (!name || !email || !password) {
         return res.status(400).json({ error: 'Please provide all fields' });
@@ -28,7 +28,6 @@ router.post('/register', async (req, res) => {
             (err, results) => {
                 if (err) return res.status(500).json({ error: 'Database error' });
 
-                // Create JWT token including admin data
                 const token = jwt.sign(
                     { id: results.insertId, is_admin: is_admin ? 1 : 0 },
                     process.env.JWT_SECRET,
@@ -55,7 +54,7 @@ router.post('/login', (req, res) => {
 
         const user = results[0];
 
-        // ❌ Blocked user check
+        // Blocked user check
         if (user.is_blocked === 1) {
             return res.status(403).json({ error: 'Your account is blocked. Contact admin.' });
         }

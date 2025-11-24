@@ -167,7 +167,6 @@ const SharePlant = () => {
   );
 };
 
-// Reusable Input Field Component
 const InputField = ({ label, type = 'text', value, onChange, ...props }) => (
   <div style={inputGroupStyle}>
     <label style={labelStyle}>{label}:</label>

@@ -20,12 +20,13 @@ const Cart = () => {
         });
         setCartItems(res.data);
       } catch (err) {
-        console.log(err);
-        alert('Failed to fetch cart');
+        console.error(err);
+        alert('❌ Failed to fetch cart');
       }
     };
     fetchCart();
   }, [token]);
+
 
   const increaseQuantity = async (cartId, currentQuantity, stock) => {
     if (currentQuantity >= stock) return alert('❌ Cannot add more. Stock limit reached.');
@@ -37,7 +38,7 @@ const Cart = () => {
       );
       setCartItems(prev => prev.map(item => item.cart_id === cartId ? { ...item, quantity: item.quantity + 1 } : item));
     } catch (err) {
-      alert('Failed to update quantity');
+      alert('❌ Failed to update quantity');
     }
   };
 
@@ -51,7 +52,7 @@ const Cart = () => {
       );
       setCartItems(prev => prev.map(item => item.cart_id === cartId ? { ...item, quantity: item.quantity - 1 } : item));
     } catch (err) {
-      alert('Failed to update quantity');
+      alert('❌ Failed to update quantity');
     }
   };
 
@@ -62,31 +63,29 @@ const Cart = () => {
       });
       setCartItems(prev => prev.filter(item => item.cart_id !== cartId));
     } catch (err) {
-      alert('Failed to remove item');
+      alert('❌ Failed to remove item');
     }
   };
+
 
   const handleCheckout = () => {
     if (cartItems.length === 0) return alert('Your cart is empty');
     setShowCheckoutForm(true);
   };
 
+
   const handlePlaceOrder = async () => {
-    if (!address || !phone) return alert('Please fill in address and phone number.');
+    if (!address || !phone) return alert('❌ Please fill in address and phone number.');
+    if (address.trim().length < 10) return alert('❌ Address must be at least 10 characters.');
+    if (!/^[6-9]\d{9}$/.test(phone)) return alert('❌ Invalid 10-digit phone number.');
 
-    const itemsForCheckout = cartItems.map(item => ({
-      product_id: item.product_id,
-      quantity: item.quantity,
-      price: item.price
-    }));
-
-    const total_price = itemsForCheckout.reduce((acc, item) => acc + item.price * item.quantity, 0);
+    const payload = { address, phone, payment_method: paymentMethod };
 
     if (paymentMethod === 'COD') {
       try {
         await axios.post(
           'http://localhost:5001/api/cart/checkout',
-          { items: itemsForCheckout, total_price, address, phone, paymentMethod },
+          payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         alert('✅ Order placed successfully with COD!');
@@ -94,13 +93,15 @@ const Cart = () => {
         setShowCheckoutForm(false);
         navigate('/orders');
       } catch (err) {
+        console.error(err.response ? err.response.data : err);
         alert('❌ Checkout failed.');
       }
     } else {
       try {
+        const total_amount = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
         const { data: order } = await axios.post(
           'http://localhost:5001/api/payment/orders',
-          { amount: total_price },
+          { amount: total_amount },
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
@@ -116,12 +117,9 @@ const Cart = () => {
               await axios.post(
                 'http://localhost:5001/api/cart/checkout',
                 {
-                  items: itemsForCheckout,
-                  total_price,
-                  address,
-                  phone,
-                  paymentMethod: 'Online',
-                  payment_id: response.razorpay_payment_id,
+                  ...payload,
+                  payment_method: 'Online',
+                  payment_id: response.razorpay_payment_id
                 },
                 { headers: { Authorization: `Bearer ${token}` } }
               );
@@ -130,27 +128,23 @@ const Cart = () => {
               setShowCheckoutForm(false);
               navigate('/orders');
             } catch (err) {
+              console.error(err.response ? err.response.data : err);
               alert('❌ Failed to confirm payment.');
             }
           },
-          prefill: {
-            name: 'Sruthi',
-            email: 'user@example.com',
-            contact: phone
-          },
-          theme: {
-            color: '#4CAF50'
-          }
+          prefill: { contact: phone },
+          theme: { color: '#4CAF50' }
         };
 
         const razor = new window.Razorpay(options);
         razor.open();
       } catch (err) {
+        console.error(err.response ? err.response.data : err);
         alert('❌ Razorpay initialization failed.');
-        console.log(err);
       }
     }
   };
+
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -159,9 +153,7 @@ const Cart = () => {
     document.body.appendChild(script);
   }, []);
 
-  if (!token) {
-    return <p style={{ textAlign: 'center', marginTop: '20px' }}>Please login to view your cart.</p>;
-  }
+  if (!token) return <p style={{ textAlign: 'center', marginTop: '20px' }}>Please login to view your cart.</p>;
 
   return (
     <div style={containerStyle}>
@@ -200,20 +192,22 @@ const Cart = () => {
         </>
       )}
 
-      {/* ✅ Checkout Modal */}
       {showCheckoutForm && (
         <div style={overlayStyle}>
           <div style={modalStyle}>
             <h3>🧾 Checkout Details</h3>
             <label>Address:</label>
             <textarea value={address} onChange={(e) => setAddress(e.target.value)} style={inputStyle} />
+
             <label>Phone Number:</label>
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} />
+
             <label>Payment Method:</label>
             <select value={paymentMethod} onChange={(e) => setPaymentMethod(e.target.value)} style={inputStyle}>
               <option value="COD">Cash on Delivery (COD)</option>
               <option value="Online">Online Payment</option>
             </select>
+
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '15px' }}>
               <button onClick={handlePlaceOrder} style={btnGreen}>Place Order</button>
               <button onClick={() => setShowCheckoutForm(false)} style={btnRed}>Cancel</button>
@@ -232,12 +226,10 @@ const gridStyle = { display: 'flex', flexWrap: 'wrap', justifyContent: 'center',
 const cardStyle = { border: '1px solid #ccc', padding: '15px', borderRadius: '8px', width: '250px' };
 const imageStyle = { width: '100%', height: '150px', borderRadius: '8px', objectFit: 'cover' };
 const quantityStyle = { display: 'flex', justifyContent: 'center', gap: '10px', margin: '10px 0' };
-
 const btnGreen = { backgroundColor: '#4CAF50', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '5px' };
 const btnRed = { backgroundColor: '#f44336', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '5px' };
 const btnBlue = { backgroundColor: '#2196F3', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '5px' };
 const btnOrange = { backgroundColor: '#ff9800', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '5px' };
-
 const overlayStyle = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' };
 const modalStyle = { background: '#fff', padding: '25px', borderRadius: '10px', width: '350px', textAlign: 'left' };
 const inputStyle = { width: '100%', marginBottom: '10px', padding: '8px', borderRadius: '5px', border: '1px solid #ccc' };

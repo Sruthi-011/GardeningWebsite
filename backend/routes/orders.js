@@ -3,12 +3,21 @@ const router = express.Router();
 const db = require('../config/db');
 const { protect, isAdmin } = require('../middleware/authMiddleware');
 
-// Get orders for logged-in user, including status
 router.get('/', protect, async (req, res) => {
     try {
         const [results] = await db.promise().query(`
-            SELECT o.id AS order_id, o.total_price, o.status, o.created_at,
-                   oi.product_id, p.name, oi.quantity, oi.price
+            SELECT 
+                o.id AS order_id, 
+                o.total_price, 
+                o.status, 
+                o.created_at,
+                o.address,
+                o.phone,
+                o.payment_method,
+                oi.product_id, 
+                p.name, 
+                oi.quantity, 
+                oi.price
             FROM orders o
             LEFT JOIN order_items oi ON o.id = oi.order_id
             LEFT JOIN products p ON oi.product_id = p.id
@@ -17,6 +26,7 @@ router.get('/', protect, async (req, res) => {
         `, [req.user.id]);
 
         const ordersMap = {};
+
         results.forEach(row => {
             if (!ordersMap[row.order_id]) {
                 ordersMap[row.order_id] = {
@@ -24,9 +34,13 @@ router.get('/', protect, async (req, res) => {
                     total_price: row.total_price,
                     status: row.status || 'Pending',
                     created_at: row.created_at,
+                    address: row.address,
+                    phone: row.phone,
+                    payment_method: row.payment_method,
                     products: []
                 };
             }
+
             if (row.product_id) {
                 ordersMap[row.order_id].products.push({
                     product_id: row.product_id,
@@ -44,12 +58,22 @@ router.get('/', protect, async (req, res) => {
     }
 });
 
-// Admin: Get all orders with status
 router.get('/all', protect, isAdmin, async (req, res) => {
     try {
         const [results] = await db.promise().query(`
-            SELECT o.id AS order_id, o.user_id, o.total_price, o.status, o.created_at,
-                   oi.product_id, p.name, oi.quantity, oi.price
+            SELECT 
+                o.id AS order_id, 
+                o.user_id, 
+                o.total_price, 
+                o.status, 
+                o.created_at,
+                o.address,
+                o.phone,
+                o.payment_method,
+                oi.product_id, 
+                p.name, 
+                oi.quantity, 
+                oi.price
             FROM orders o
             LEFT JOIN order_items oi ON o.id = oi.order_id
             LEFT JOIN products p ON oi.product_id = p.id
@@ -57,6 +81,7 @@ router.get('/all', protect, isAdmin, async (req, res) => {
         `);
 
         const ordersMap = {};
+
         results.forEach(row => {
             if (!ordersMap[row.order_id]) {
                 ordersMap[row.order_id] = {
@@ -65,9 +90,13 @@ router.get('/all', protect, isAdmin, async (req, res) => {
                     total_price: row.total_price,
                     status: row.status || 'Pending',
                     created_at: row.created_at,
+                    address: row.address,
+                    phone: row.phone,
+                    payment_method: row.payment_method,
                     products: []
                 };
             }
+
             if (row.product_id) {
                 ordersMap[row.order_id].products.push({
                     product_id: row.product_id,

@@ -19,5 +19,5 @@ app.use("/api/admin", adminVisitRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 
 app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });

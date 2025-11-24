@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../config/db');
 const { protect } = require('../middleware/authMiddleware');
 
-// Get all cart items
+
 router.get('/', protect, async (req, res) => {
     try {
         const [cartItems] = await db.promise().query(`
@@ -19,7 +19,7 @@ router.get('/', protect, async (req, res) => {
     }
 });
 
-// Add or update cart
+
 router.post('/', protect, async (req, res) => {
     const { product_id, quantity } = req.body;
     if (!product_id || !quantity) return res.status(400).json({ error: 'Product ID and quantity required' });
@@ -49,7 +49,7 @@ router.post('/', protect, async (req, res) => {
     }
 });
 
-// Update quantity
+
 router.put('/:id', protect, async (req, res) => {
     const { quantity } = req.body;
     if (!quantity || quantity < 1) return res.status(400).json({ error: 'Invalid quantity' });
@@ -67,7 +67,7 @@ router.put('/:id', protect, async (req, res) => {
     }
 });
 
-// Remove item
+
 router.delete('/:id', protect, async (req, res) => {
     try {
         const [result] = await db.promise().query(
@@ -82,8 +82,14 @@ router.delete('/:id', protect, async (req, res) => {
     }
 });
 
-// Checkout
+
 router.post('/checkout', protect, async (req, res) => {
+    const { address, phone, payment_method } = req.body;
+
+    if (!address || !phone || !payment_method) {
+        return res.status(400).json({ error: "Address, phone and payment method are required" });
+    }
+
     let connection;
     try {
         connection = await db.promise().getConnection();
@@ -99,29 +105,33 @@ router.post('/checkout', protect, async (req, res) => {
 
         if (cartItems.length === 0) throw new Error('Cart is empty');
 
-        // Check stock & calculate total
+        // Calculate total price and check stock
         let totalPrice = 0;
         for (const item of cartItems) {
-            if (item.stock < item.quantity) throw new Error(`Not enough stock for ${item.name}`);
+            if (item.stock < item.quantity)
+                throw new Error(`Not enough stock for ${item.name}`);
             totalPrice += item.quantity * item.price;
         }
 
-        // Insert order
+        // Insert order with address, phone, payment method
         const [orderResult] = await connection.query(
-            'INSERT INTO orders (user_id, total_price) VALUES (?, ?)',
-            [req.user.id, totalPrice]
+            `INSERT INTO orders (user_id, total_price, address, phone, payment_method) 
+             VALUES (?, ?, ?, ?, ?)`,
+            [req.user.id, totalPrice, address, phone, payment_method]
         );
+
         const orderId = orderResult.insertId;
 
-        // Insert order_items & update stock
+        // Insert order items and update stock
         for (const item of cartItems) {
             await connection.query(
-                'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
+                `INSERT INTO order_items (order_id, product_id, quantity, price) 
+                 VALUES (?, ?, ?, ?)`,
                 [orderId, item.product_id, item.quantity, item.price]
             );
             await connection.query(
-                'UPDATE products SET stock = stock - ? WHERE id = ? AND stock >= ?',
-                [item.quantity, item.product_id, item.quantity]
+                `UPDATE products SET stock = stock - ? WHERE id = ?`,
+                [item.quantity, item.product_id]
             );
         }
 
@@ -130,15 +140,20 @@ router.post('/checkout', protect, async (req, res) => {
 
         await connection.commit();
         connection.release();
-        res.json({ message: 'Order placed successfully!', total_price: totalPrice, orderId });
+
+        res.json({
+            message: "Order placed successfully!",
+            orderId,
+            total_price: totalPrice
+        });
 
     } catch (err) {
         if (connection) {
             await connection.rollback();
             connection.release();
         }
-        console.error('Checkout Error:', err.message);
-        res.status(500).json({ error: err.message || 'Checkout failed' });
+        console.error("Checkout Error:", err.message);
+        res.status(500).json({ error: err.message || "Checkout failed" });
     }
 });
 

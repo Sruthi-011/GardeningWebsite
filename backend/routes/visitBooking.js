@@ -3,9 +3,6 @@ const router = express.Router();
 const db = require('../config/db');
 const { protect } = require('../middleware/authMiddleware');
 
-/* -------------------------------------------------------------------------- */
-/* 🗓️ POST: Create a new visit booking (no slot restriction) */
-/* -------------------------------------------------------------------------- */
 router.post('/', protect, (req, res) => {
   const { visit_date, time_slot } = req.body;
 
@@ -13,7 +10,6 @@ router.post('/', protect, (req, res) => {
     return res.status(400).json({ error: 'Please provide visit date and time slot' });
   }
 
-  // ✅ Directly insert new booking (no checking for existing slots)
   const insertQuery = `
     INSERT INTO visit_bookings (user_id, visit_date, time_slot, status)
     VALUES (?, ?, ?, 'Pending')
@@ -29,9 +25,6 @@ router.post('/', protect, (req, res) => {
   });
 });
 
-/* -------------------------------------------------------------------------- */
-/* 📅 GET: All bookings of logged-in user (with status) */
-/* -------------------------------------------------------------------------- */
 router.get('/my-bookings', protect, (req, res) => {
   const query = `
     SELECT id, visit_date, time_slot, status, created_at 

@@ -22,7 +22,7 @@ const protect = (req, res, next) => {
             }
 
             req.user = results[0]; 
-            console.log('✅ protect middleware: req.user =', req.user); 
+            console.log('protect middleware: req.user =', req.user); 
             next();
         });
     } catch (err) {

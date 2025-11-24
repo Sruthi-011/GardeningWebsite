@@ -3,7 +3,6 @@ const router = express.Router();
 const db = require('../config/db');
 const { protect, isAdmin } = require('../middleware/authMiddleware');
 
-// Utility to normalize category names
 const normalizeCategory = (cat) => {
     if (!cat) return '';
     const lower = cat.toLowerCase();
@@ -13,7 +12,6 @@ const normalizeCategory = (cat) => {
     return cat.charAt(0).toUpperCase() + cat.slice(1);
 };
 
-// GET products with optional filters
 router.get('/', (req, res) => {
     const { type, filter, season } = req.query;
     const params = [];
@@ -29,7 +27,6 @@ router.get('/', (req, res) => {
         params.push('Garden Gadget');
     } else if (type === 'plants') {
         if (filter === 'featured') {
-            // Featured plants and flowers
             conditions.push('(category = ? OR category = ?)');
             params.push('Plant', 'Flower');
             conditions.push('is_featured = 1');
@@ -37,12 +34,10 @@ router.get('/', (req, res) => {
             conditions.push('category = ?');
             params.push(filter);
         } else {
-            // Default to show all Plant & Flower if no filter
             conditions.push('(category = ? OR category = ?)');
             params.push('Plant', 'Flower');
         }
     } else {
-        // Invalid type → return empty array to be safe
         return res.json([]);
     }
 
@@ -61,7 +56,6 @@ router.get('/', (req, res) => {
     });
 });
 
-// POST: Add a new product (Admin only)
 router.post('/', protect, isAdmin, (req, res) => {
     const { name, description, price, image_url, category, stock, season, is_featured } = req.body;
 
@@ -86,7 +80,6 @@ router.post('/', protect, isAdmin, (req, res) => {
     );
 });
 
-// PUT: Update a product (Admin only)
 router.put('/:id', protect, isAdmin, (req, res) => {
     const { id } = req.params;
     const { name, description, price, image_url, category, stock, season, is_featured } = req.body;
@@ -110,7 +103,6 @@ router.put('/:id', protect, isAdmin, (req, res) => {
     );
 });
 
-// DELETE: Remove a product (Admin only)
 router.delete('/:id', protect, isAdmin, (req, res) => {
     const { id } = req.params;
     const query = `DELETE FROM products WHERE id = ?`;

@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../config/db');
 const { protect, isAdmin } = require('../middleware/authMiddleware');
 
-// GET all products (Admin)
+// GET all products
 router.get('/', protect, isAdmin, (req, res) => {
     const query = 'SELECT * FROM products ORDER BY created_at DESC';
     db.query(query, (err, results) => {

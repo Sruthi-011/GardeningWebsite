@@ -5,9 +5,6 @@ const { protect } = require('../middleware/authMiddleware');
 const multer = require('multer');
 const path = require('path');
 
-/* -------------------------------------------------------------------------- */
-/* 🌿 MULTER SETUP */
-/* -------------------------------------------------------------------------- */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'uploads/');
@@ -20,9 +17,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-/* -------------------------------------------------------------------------- */
-/* 🪴 POST: Share a new plant (Protected Route) */
-/* -------------------------------------------------------------------------- */
 router.post('/', protect, upload.single('image'), (req, res) => {
   const { plant_name, description, category, quantity, location, phone_number } = req.body;
   const image_url = req.file ? `/uploads/${req.file.filename}` : null;
@@ -62,9 +56,6 @@ router.post('/', protect, upload.single('image'), (req, res) => {
   );
 });
 
-/* -------------------------------------------------------------------------- */
-/* 🌱 GET: Fetch all shared plants */
-/* -------------------------------------------------------------------------- */
 router.get('/', (req, res) => {
   const query = `
     SELECT 
@@ -92,7 +83,6 @@ router.get('/', (req, res) => {
       return res.status(500).json({ error: 'Database error while fetching plants' });
     }
 
-    // ✅ Handle missing phone number
     const formattedResults = results.map((plant) => ({
       ...plant,
       phone_number: plant.phone_number || 'Not specified',
@@ -102,9 +92,6 @@ router.get('/', (req, res) => {
   });
 });
 
-/* -------------------------------------------------------------------------- */
-/* 🔄 PUT: Update plant status (Protected Route) */
-/* -------------------------------------------------------------------------- */
 router.put('/:id/status', protect, (req, res) => {
   const { id } = req.params;
   const { status } = req.body;

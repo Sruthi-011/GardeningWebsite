@@ -16,7 +16,6 @@ const AdminDashboard = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      {/* 🌿 Sidebar */}
       <div
         style={{
           width: '220px',
@@ -39,7 +38,6 @@ const AdminDashboard = () => {
           Admin Panel
         </h2>
 
-        {/* Sidebar Buttons */}
         {menuItems.map((item) => (
           <button
             key={item.key}
@@ -62,7 +60,6 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* Main Content */}
       <div
         style={{
           flex: 1,

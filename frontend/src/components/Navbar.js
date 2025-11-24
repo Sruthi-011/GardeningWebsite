@@ -55,10 +55,10 @@ const Navbar = () => {
         {token && <Link to="/share-plant" style={linkStyle}>Share a Plant</Link>}
         {token && <Link to="/orders" style={linkStyle}>Orders</Link>}
 
-        {/* ✅ Chatbot Page Link */}
+        {/* Chatbot Page Link */}
         <Link to="/chatbot" style={{ ...linkStyle, fontWeight: '600' }}>BloomBot</Link>
 
-        {/* ✅ Admin Dashboard Link */}
+        {/* Admin Dashboard Link */}
         {token && userEmail === adminEmail && (
           <Link
             to="/admin-dashboard"
@@ -68,7 +68,7 @@ const Navbar = () => {
           </Link>
         )}
 
-        {/* ✅ Auth Links */}
+        {/* Auth Links */}
         {!token ? (
           <>
             <Link to="/login" style={linkStyle}>Login</Link>
